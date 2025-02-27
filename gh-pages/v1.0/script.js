@@ -65,20 +65,19 @@ class Board {
         this.displayBoard();
     
         this.rl.question(`Player ${this.currentPlayer}, choose a number...\n`, (pos) => {    
-            if (this.makeMove(pos, this.currentPlayer)) {
-                this.displayBoard();
-                    const winner = this.checkWinner()
+            if (this.makeMove(pos, this.currentPlayer)) {  
+                const winner = this.checkWinner()
                     if(winner){
-                        console.log(`Player ${winner} wins!`);
+                        console.log(`\nPlayer ${winner} wins!\n`);
+                        this.displayBoard();
                         this.rl.close();
                         return;
                     }
+                console.log('\n')
                 this.changePlayer();
                 this.play();
             } else {
-                console.log('\n')
-                console.log('Space already taken. Please try again!')
-                console.log('\n')
+                console.log('\nSpace already taken. Please try again!\n')
                 this.play();
             }
         })
