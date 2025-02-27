@@ -57,7 +57,7 @@ class Board {
         if (line.every((square) => square === "X")) return "X";
     }
 
-    return this.board.flat().every((square) => square === 'X' || square === 'O') ? 'Draw' : null;
+    return this.board.flat().every((square) => square === 'X' || square === 'O') ? 'draw' : null;
     }
 
     play() {
@@ -68,7 +68,7 @@ class Board {
             if (this.makeMove(pos, this.currentPlayer)) {  
                 const winner = this.checkWinner()
                     if(winner){
-                        console.log(`\nPlayer ${winner} wins!\n`);
+                        console.log(winner === "draw" ? "\nIt's a draw!\n" : `\n${winner} wins!\n`);
                         this.displayBoard();
                         this.rl.close();
                         return;
