@@ -100,7 +100,9 @@ function startGame() {
 
                 const game = new TicTacToe(playerOneSymbol, playWithComputer, bestOf);
                 
-                UI.showMessage(`\n${game.currentPlayer} starts first!`);
+                setTimeout(() => {
+                UI.showMessage(`\n              Flipping coin...`);
+                UI.showMessage(`\n              ${game.currentPlayer} starts first!`);
                 
                 setTimeout(() => {
                     UI.clear();
@@ -109,7 +111,7 @@ function startGame() {
                     game.changePlayer();
                     handleTurn(game);
                 }, 500);
-                
+            }, 500);
             });
         });
     });
@@ -153,14 +155,14 @@ function handleTurn(game) {
 }
 
 function playerOne(game) {
-    UI.askQuestion(`         Player ${game.currentPlayer}, choose a number...`, (pos) => {
+    UI.askQuestion(`         Player ${game.currentPlayer}, choose a number...\n`, (pos) => {
         const position = parseInt(pos);
         if (isNaN(position) || position < 1 || position > 9) {
-            UI.invalidInput("         Invalid input! Choose a number between 1 and 9.");
+            UI.invalidInput("Invalid input! Choose a number between 1 and 9.");
             return playerOne(game);
         }
         if (!game.makeMove(position)) {
-            UI.invalidInput("     Spot already taken! Try again.");
+            UI.invalidInput("\n       Spot already taken! Try again.");
             return playerOne(game);
         }
         UI.clear();
@@ -228,7 +230,7 @@ const UI = {
     },
 
     invalidInput(message) {
-        this.showMessage(`❌ ${message}`);
+        this.showMessage(`${message}`);
     },
 
     header(game) {
