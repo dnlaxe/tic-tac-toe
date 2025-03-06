@@ -1,0 +1,85 @@
+/* 1. Use a more-intuitive box-sizing model */
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  /* 2. Remove default margin */
+  * {
+    margin: 0;
+  }
+  
+  body {
+    /* 3. Add accessible line-height */
+    line-height: 1.5;
+    /* 4. Improve text rendering */
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* 5. Improve media defaults */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+  
+  /* 6. Inherit fonts for form controls */
+  input, button, textarea, select {
+    font: inherit;
+  }
+  
+  /* 7. Avoid text overflows */
+  p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+  
+  /* 8. Improve line wrapping */
+  p {
+    text-wrap: pretty;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+  
+  /*
+    9. Create a root stacking context
+  */
+  #root, #__next {
+    isolation: isolate;
+  }
+
+* {
+    font-family: "Ubuntu Mono", monospace;
+    font-size: 24px;
+    background-color: black;
+    color: whitesmoke;
+}
+
+body {
+  display: grid;
+  justify-content: center;
+}
+
+#console {
+    width: 800px;
+    overflow: auto;
+    padding: 50px;
+    text-align: center;
+}
+
+textarea:focus, input:focus{
+  outline: none;
+}
+
+input {
+  background-color: transparent;
+  border-style: none;
+  text-align: center;
+}
+
+div, input {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+span {
+  color: black;
+}

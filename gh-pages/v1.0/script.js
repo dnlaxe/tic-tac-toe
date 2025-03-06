@@ -77,27 +77,35 @@ class TicTacToe {
 function startGame() {
     UI.clear();
     UI.headerStart();
-    UI.askQuestion("Do you want to play with the computer? (y/n)", (withComputer) => {
-        const playWithComputer = withComputer.toLowerCase() === 'y';
-
-        UI.askQuestion("Do you want to be X or O?", (symbol) => {
-            const playerOneSymbol = symbol.toUpperCase();
-
-            if (playerOneSymbol !== 'X' && playerOneSymbol !== 'O') {
-                UI.invalidInput("Invalid symbol! Please choose X or O.");
-                UI.clear();
-                return startGame();
+    UI.askQuestion(" Do you want to play with the computer? (y/n)", function askWithComputer(withComputer) {
+        withComputer = withComputer.trim().toLowerCase();
+        
+        if (withComputer !== 'y' && withComputer !== 'n') {
+            UI.invalidInput("\n               Invalid input!");
+            return UI.askQuestion("\n Do you want to play with the computer? (y/n)", askWithComputer);
+        }
+    
+        const playWithComputer = withComputer === 'y';
+    
+        UI.askQuestion("\n          Do you want to be X or O?", function askSymbol(symbol) {
+            symbol = symbol.trim().toUpperCase();
+            
+            if (symbol !== 'X' && symbol !== 'O') {
+                UI.invalidInput("\n               Invalid symbol!");
+                return UI.askQuestion("\n          Do you want to be X or O?", askSymbol);
             }
-
-            UI.askQuestion("Best of how many games?", (numGames) => {
+    
+            const playerOneSymbol = symbol;
+    
+            UI.askQuestion("\n   Best of how many games? Enter odd number", function askNumGames(numGames) {
+                numGames = numGames.trim();
                 const bestOf = parseInt(numGames);
-
-                if (isNaN(bestOf) || bestOf <= 0) {
-                    UI.invalidInput("Invalid number! Please enter a positive integer.");
-                    UI.clear();
-                    return startGame();
+    
+                if (isNaN(bestOf) || bestOf <= 0 || bestOf % 2 === 0) {
+                    UI.invalidInput("\n              Invalid number!");
+                    return UI.askQuestion("\n    Best of how many games? Enter odd number", askNumGames);
                 }
-
+            
                 const game = new TicTacToe(playerOneSymbol, playWithComputer, bestOf);
                 
                 setTimeout(() => {
@@ -126,12 +134,19 @@ function handleTurn(game) {
         
         const seriesWinner = game.checkSeriesWinner();
         if (seriesWinner) {
-            setTimeout(() => {
-            UI.clear();
-            UI.header(game);
-            UI.displayBoard(game.board);
-            UI.announceSeriesWinner(seriesWinner, game);
-            }, 500);
+                UI.clear();
+                UI.header(game);
+                UI.displayBoard(game.board);
+                UI.announceSeriesWinner(seriesWinner, game);
+
+                UI.askQuestion("       Do you want to play again? y/n", (oneMoreTime) => {
+                const onceMore  = oneMoreTime.toLowerCase() === 'y';
+                if(onceMore) {
+                    startGame();
+                } else {
+                    rl.close();
+                }
+            });
             return;
         }
 
@@ -143,7 +158,8 @@ function handleTurn(game) {
             UI.clear();
             UI.header(game);
             UI.displayBoard(game.board);
-            UI.showMessage(`      Next round starting... ${game.currentPlayer} goes first.`);
+            UI.showMessage(`            Next round to begin...\n`);
+            UI.showMessage(`        Flipping coin... ${game.currentPlayer} goes first.\n`);
             handleTurn(game)}, 2000);
         return;
     }
@@ -223,10 +239,9 @@ const UI = {
     },
 
     announceSeriesWinner(seriesWinner, game) {
-        this.showMessage('\n*********************************************\n\n'
-            +`          ${seriesWinner} wins the series ${game.score.X > game.score.O ? game.score.X : game.score.O} TO ${game.score.X > game.score.O ? game.score.O : game.score.X}\n\n`
+        this.showMessage('*********************************************\n\n'
+            +`          ${seriesWinner} wins the series ${game.score.X > game.score.O ? game.score.X : game.score.O} to ${game.score.X > game.score.O ? game.score.O : game.score.X}\n\n`
             +'*********************************************\n');
-        rl.close();
     },
 
     invalidInput(message) {
@@ -237,7 +252,7 @@ const UI = {
         console.log('\n*********************************************\n\n'
                  +'       T  I  C  -  T  A  C  -  T  O  E\n\n'
                  +'*********************************************\n\n'
-                +`X PTS : ${game.score.X}         BEST OF ${game.totalGames}         O PTS : ${game.score.O}\n`);
+                +` X PTS : ${game.score.X}        BEST OF ${game.totalGames}        O PTS : ${game.score.O}\n`);
     },
 
     headerStart() {
