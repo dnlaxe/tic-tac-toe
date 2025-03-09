@@ -1,5 +1,5 @@
-
 // MODEL
+
 class TicTacToe {
     constructor(symbol, withComputer, bestOf) {
         this.board = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -68,54 +68,56 @@ class TicTacToe {
     }
 }
 
-
-
 // FLOW
 
+document.addEventListener("DOMContentLoaded", function () {
+    startGame();
+})
+
 function startGame() {
-    document.addEventListener("DOMContentLoaded", function () {
-    removeAllDivs();
-    headerStart();
-    askQuestion("Do you want to play with the computer? (y/n)", function askWithComputer(withComputer) {
+    UI.clear();
+    UI.headerStart();
+    UI.askQuestion("Do you want to play with the computer? (y/n)", function askWithComputer(withComputer) {
         withComputer = withComputer.trim().toLowerCase();
         
         if (withComputer !== 'y' && withComputer !== 'n') {
-            invalidInput("Invalid input!");
-            return askQuestion("Do you want to play with the computer? (y/n)", askWithComputer);
+            UI.invalidInput("Invalid input!");
+            return UI.askQuestion("Do you want to play with the computer? (y/n)", askWithComputer);
         }
     
         const playWithComputer = withComputer === 'y';
     
-        askQuestion("Do you want to be X or O?", function askSymbol(symbol) {
+        UI.askQuestion("Do you want to be X or O?", function askSymbol(symbol) {
             symbol = symbol.trim().toUpperCase();
             
             if (symbol !== 'X' && symbol !== 'O') {
-                invalidInput("Invalid symbol!");
-                return askQuestion("Do you want to be X or O?", askSymbol);
+                UI.invalidInput("Invalid symbol!");
+                return UI.askQuestion("Do you want to be X or O?", askSymbol);
             }
     
             const playerOneSymbol = symbol;
     
-            askQuestion("Best of how many games? Enter odd number", function askNumGames(numGames) {
+            UI.askQuestion("Best of how many games? Enter odd number", function askNumGames(numGames) {
                 numGames = numGames.trim();
                 const bestOf = parseInt(numGames);
     
                 if (isNaN(bestOf) || bestOf <= 0 || bestOf % 2 === 0) {
-                    invalidInput("Invalid number!");
-                    return askQuestion("Best of how many games? Enter odd number", askNumGames);
+                    UI.invalidInput("Invalid number!");
+                    return UI.askQuestion("Best of how many games? Enter odd number", askNumGames);
                 }
             
                 const game = new TicTacToe(playerOneSymbol, playWithComputer, bestOf);
-                showMessage(`Flipping coin..`);
+
+                UI.showMessage(`Flipping coin..`);
 
                 setTimeout(() => {
                 
-                showMessage(`${game.currentPlayer} starts first!`);
+                UI.showMessage(`${game.currentPlayer} starts first!`);
                 
                 setTimeout(() => {
-                    removeAllDivs();
-                    header(game);
-                    displayBoard(game.board);
+                    UI.clear();
+                    UI.header(game);
+                    UI.displayBoard(game.board);
                     game.changePlayer();
                     handleTurn(game);
                 }, 800);
@@ -123,7 +125,6 @@ function startGame() {
             });
         });
     });
-})
 }
 
 function handleTurn(game) {
@@ -131,35 +132,34 @@ function handleTurn(game) {
 
     if (winner) {
         game.updateScore(winner);
-        announceWinner(winner, game);
+        UI.announceWinner(winner, game);
         
         const seriesWinner = game.checkSeriesWinner();
         if (seriesWinner) {
-                announceSeriesWinner(seriesWinner, game);
+                UI.announceSeriesWinner(seriesWinner, game);
 
-                askQuestion("Do you want to play again? y/n", (oneMoreTime) => {
+                UI.askQuestion("Do you want to play again? y/n", (oneMoreTime) => {
                 const onceMore  = oneMoreTime.toLowerCase() === 'y';
                 if(onceMore) {
                     startGame();
                 } else {
-                    removeAllDivs();
-                    headerStart(game);
-                    showMessage('Thank you for playing.')
+                    UI.clear();
+                    UI.headerStart(game);
+                    UI.showMessage('Thank you for playing.')
                 }
             });
             return;
         }
 
         game.resetBoard();
-        game.currentPlayer = game.flipCoin();
-        
+        game.currentPlayer = game.flipCoin();   
 
         setTimeout(() => {
-            removeAllDivs();
-            header(game);
-            displayBoard(game.board);
-            showMessage(`Next round to begin..\n`);
-            showMessage(`Flipping coin.. ${game.currentPlayer} goes first.\n`);
+            UI.clear();
+            UI.header(game);
+            UI.displayBoard(game.board);
+            UI.showMessage(`Next round to begin..`);
+            UI.showMessage(`Flipping coin.. ${game.currentPlayer} goes first.`);
             handleTurn(game)}, 2000);
         return;
     }
@@ -171,31 +171,31 @@ function handleTurn(game) {
 }
 
 function playerOne(game) {
-    askQuestion(`Player ${game.currentPlayer}, choose a number..\n`, (pos) => {
+    UI.askQuestion(`Player ${game.currentPlayer}, choose a number..`, (pos) => {
         const position = parseInt(pos);
         if (isNaN(position) || position < 1 || position > 9) {
-            invalidInput("Invalid input! Choose a number between 1 and 9.");
+            UI.invalidInput("Invalid input! Choose a number between 1 and 9.");
             return playerOne(game);
         }
         if (!game.makeMove(position)) {
-            invalidInput("Spot already taken! Try again.");
+            UI.invalidInput("Spot already taken! Try again.");
             return playerOne(game);
         }
-        removeAllDivs();
-        header(game);
-        displayBoard(game.board);
+        UI.clear();
+        UI.header(game);
+        UI.displayBoard(game.board);
         handleTurn(game);
     });
 }
 
 function playerTwo(game) {
     if (game.playWithComputer) {
-        showMessage("Computer's turn..");
+        UI.showMessage("Computer's turn..");
         setTimeout(() => {
             computerMove(game);
-            removeAllDivs();
-            header(game);
-            displayBoard(game.board);
+            UI.clear();
+            UI.header(game);
+            UI.displayBoard(game.board);
             handleTurn(game)
         }, 1000); 
     } else {
@@ -204,6 +204,7 @@ function playerTwo(game) {
 }
 
 // COMPUTER LOGIC
+
 function computerMove(game) {
     let move;
     do {
@@ -211,89 +212,114 @@ function computerMove(game) {
     } while (!game.makeMove(move));
 }
 
-//NEW UI
+// WEB UI
 
-const consoleDiv = document.getElementById('console');
-
-function askQuestion(questionText, callback) {
-
+class WEB_UI {
+    constructor(consoleElementId) {
+        this.consoleDiv = document.getElementById(consoleElementId);
+    }
     
-    if (!consoleDiv) {
-        console.error("Element with id 'console' not found.");
-        return;
+    showMessage(message) {
+            const messageDiv = document.createElement("div");
+            messageDiv.innerHTML = message;
+            this.consoleDiv.appendChild(messageDiv);
     }
 
+    displayBoard(board) {
+        this.showMessage(
+            `${board[0]} | ${board[1]} | ${board[2]}<br>` +
+            `---•---•---<br>` +
+            `${board[3]} | ${board[4]} | ${board[5]}<br>` +
+            `---•---•---<br>` +
+            `${board[6]} | ${board[7]} | ${board[8]}`
+        );
+    }
 
-    const questionDiv = document.createElement("div");
-    questionDiv.innerHTML = questionText;
-    consoleDiv.appendChild(questionDiv);
+    askQuestion(questionText, callback) {
+        document.querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
+        
+        const questionDiv = document.createElement("div");
+        questionDiv.innerHTML = questionText;
+        this.consoleDiv.appendChild(questionDiv);
+        
+        const inputField = document.createElement("input");
+        inputField.type = "text";
+        inputField.id = "user-input";
+        this.consoleDiv.appendChild(inputField);
+        inputField.focus();
 
-    const inputField = document.createElement("input");
-    inputField.type = "text";
-    inputField.id = "user-input";
-    consoleDiv.appendChild(inputField);
+        inputField.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                callback(inputField.value.trim());
+            }
+        });
+    }
 
-    inputField.focus();
+    announceWinner(winner, game) {
+        const message = winner === "DRAW" 
+            ? `---------------------------------------------------<br>Round ${game.round}: It's a tie!<br>---------------------------------------------------`
+            : `---------------------------------------------------<br>Round ${game.round}: Winner: ${winner}<br>---------------------------------------------------`;
+        this.showMessage(message);
+    }
 
-    inputField.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            callback(inputField.value.trim());
-        }
-    });
-}
+    announceSeriesWinner(seriesWinner, game) {
+        this.showMessage(
+            '***************************************************<br>' +
+            `          ${seriesWinner} WINS THE SERIES ${Math.max(game.score.X, game.score.O)} TO ${Math.min(game.score.X, game.score.O)}<br>` +
+            '***************************************************'
+        );
+    }
 
-function showMessage(message) {
-    const messageDiv = document.createElement("div");
-    messageDiv.innerHTML = message;
-    consoleDiv.appendChild(messageDiv);
-}
+    invalidInput(message) {
+        this.showMessage(message);
+    }    
+    
+    header(game) {
+        this.showMessage(
+            '***************************************************<br>' +
+            'T  I  C  -  T  A  C  -  T  O  E<br>' +
+            '***************************************************<br>' +
+            `X PTS : ${game.score.X} <span></span> BEST OF ${game.totalGames} <span></span> O PTS : ${game.score.O}<br>`
+        );
+    }
 
+    headerStart() {
+        this.showMessage(
+            '***************************************************<br>' +
+            'T  I  C  -  T  A  C  -  T  O  E<br>' +
+            '***************************************************'
+        );
 
-function removeDiv(element) {
-    if (consoleDiv.contains(element)) {
-        consoleDiv.removeChild(element);
+    }
+    clear() {
+        this.consoleDiv.innerHTML = "";
     }
 }
 
-function removeAllDivs() {
-    consoleDiv.innerHTML = "";
-}
+// DARK LIGHT MODE TOGGLE
+const themeToggle = document.getElementById('themeToggle');
 
-function announceWinner(winner, game) {
-    if (winner === "DRAW") {
-        showMessage(`---------------------------------------------------<br>Round ${game.round}: It's a tie!<br>---------------------------------------------------`);
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+
+    if (document.body.classList.contains('dark-theme')) {
+        themeToggle.src = "icons/light.svg";
     } else {
-        showMessage(`---------------------------------------------------<br>Round ${game.round}: Winner: ${winner}<br>---------------------------------------------------`);
+        themeToggle.src = "icons/dark.svg";
     }
-}
-
-function announceSeriesWinner(seriesWinner, game) {
-    showMessage('***************************************************<br>'
-        +`          ${seriesWinner} WINS THE SERIES ${game.score.X > game.score.O ? game.score.X : game.score.O} TO ${game.score.X > game.score.O ? game.score.O : game.score.X}<br>`
-        +'***************************************************');
-}
-
-function invalidInput(message) {
-    this.showMessage(`${message}`);
-}
     
-function displayBoard(board) {
-        showMessage(`${board[0]} | ${board[1]} | ${board[2]}<br>---•---•---<br>${board[3]} | ${board[4]} | ${board[5]}<br>---•---•---<br>${board[6]} | ${board[7]} | ${board[8]}`);
+    const inputFields = document.querySelectorAll("input[type='text']");
+    if (inputFields) {
+        inputFields[inputFields.length - 1].focus();
     }
+});
 
+document.addEventListener("click", function (event) {
+    const inputFields = document.querySelectorAll("input[type='text']");
+    if (inputFields) {
+        inputFields[inputFields.length - 1].focus();
+    }
+})
 
-function header(game) {
-        showMessage('***************************************************<br>'
-            +'T  I  C  -  T  A  C  -  T  O  E\n\n'
-            +'***************************************************<br>'
-            +`X PTS : ${game.score.X}` + "<span>..........</span>" + `BEST OF ${game.totalGames}` + "<span>..........</span>" + `O PTS : ${game.score.O}<br> `);
-}
-
-function headerStart() {
-        showMessage('***************************************************<br>'
-                 +'T  I  C  -  T  A  C  -  T  O  E\n\n'
-                 +'***************************************************\n');
-}
-
-
+const UI = new WEB_UI('console');
 startGame();

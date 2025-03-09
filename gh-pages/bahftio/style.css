@@ -54,7 +54,7 @@
 
 .dark-theme {
   --bg-color: #183C4D;
-  --text-color: #F2F3EF;;
+  --text-color: #F2F3EF;
   --icon-color: invert(1);
 }
 
@@ -62,38 +62,30 @@ body {
   display: grid;
   justify-content: center;
   font-family: "Ubuntu Mono", monospace;
-  font-size: 24px;
+  font-size: 18px;
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.25s, color 0.25s, filter 0.25s;
   height: 100%;
 }
 
-#console {
-    width: 700px;
-    overflow: auto;
-    text-align: center;
-}
-
-textarea:focus, input:focus{
-  outline: none;
-}
-
-input {
-  background-color: transparent;
-  border-style: none;
+#header {
+  width: 700px;
+  overflow: auto;
   text-align: center;
-  color: var(--text-color);
+  font-size: 24px;
 }
 
-div, input {
-  text-align: center;
+#options {
+  width: 600px;
+  display: flex;
+  justify-content: space-between;
+  justify-self: center;
+  border-color: #183C4D;
+}
+
+.icons {
   margin-bottom: 10px;
-}
-
-span {
-  width: 120px;
-  display: inline-block;
 }
 
 .icons {
@@ -111,4 +103,19 @@ span {
   width: 20px;
   justify-self: end;
   cursor: pointer;
+}
+
+p {
+  width: 600px;
+  justify-self: center;
+  padding-top: 20px;
+}
+
+p {
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+li {
+  list-style-type: none;
 }
