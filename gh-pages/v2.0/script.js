@@ -1,325 +1,271 @@
-// MODEL
+const TicTacToe = (() => {
+    // LOGIC
+    const createGame = (player1, player2, startingPlayer) => {
 
-class TicTacToe {
-    constructor(symbol, withComputer, bestOf) {
-        this.board = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        this.playerOneSymbol = symbol; 
-        this.playerTwoSymbol = this.playerOneSymbol === 'X' ? 'O' : 'X';
-        this.currentPlayer = this.flipCoin();
-        this.score = { 
-            X: 0, O: 0 
-            };
-        this.totalGames = bestOf;
-        this.round = 0;
-        this.emptySpaces = 9;
-        this.playWithComputer = withComputer;
-    }
-
-    changePlayer() {
-        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-    }
-
-    makeMove(position) {
-        if (this.board[position - 1] === position) {
-            this.board[position - 1] = this.currentPlayer;
-            this.emptySpaces--;
-            return true;
-        }
-        return false;
-    }
-
-    checkGameWinner() {
-        const winningLines = [
-            // Rows
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],
-            // Columns 
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],
-            // Diagonals 
-            [0, 4, 8], [6, 4, 2]             
-        ];
-
-        for (const line of winningLines) {
-            if (line.every((i) => this.board[i] === 'O')) return 'O';
-            if (line.every((i) => this.board[i] === 'X')) return 'X';
-        }
-
-        return this.emptySpaces === 0 ? 'DRAW' : null;
-    }
-
-    checkSeriesWinner() {
-        const winsNeeded = Math.ceil(this.totalGames / 2);
-        if (this.score.X >= winsNeeded) return 'X';
-        if (this.score.O >= winsNeeded) return 'O';
-        return null;
-    }
-
-    updateScore(winner) {
-        if (winner !== 'DRAW') this.score[winner]++;
-        this.round++;
-    }
-
-    flipCoin() {
-        return Math.random() < 0.5 ? 'X' : 'O';
-    }
-
-    resetBoard() {
-        this.board = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        this.emptySpaces = 9;
-    }
-}
-
-// FLOW
-
-document.addEventListener("DOMContentLoaded", function () {
-    startGame();
-})
-
-function startGame() {
-    UI.clear();
-    UI.headerStart();
-    UI.askQuestion("Do you want to play with the computer? (y/n)", function askWithComputer(withComputer) {
-        withComputer = withComputer.trim().toLowerCase();
+        let board = [null, null, null, null, null, null, null, null, null];
+        let currentPlayer = startingPlayer;
         
-        if (withComputer !== 'y' && withComputer !== 'n') {
-            UI.invalidInput("Invalid input!");
-            return UI.askQuestion("Do you want to play with the computer? (y/n)", askWithComputer);
-        }
-    
-        const playWithComputer = withComputer === 'y';
-    
-        UI.askQuestion("Do you want to be X or O?", function askSymbol(symbol) {
-            symbol = symbol.trim().toUpperCase();
-            
-            if (symbol !== 'X' && symbol !== 'O') {
-                UI.invalidInput("Invalid symbol!");
-                return UI.askQuestion("Do you want to be X or O?", askSymbol);
+        const makeMove = (index) => {
+            if (board[index - 1] === null) {
+                board[index - 1] = currentPlayer;
+                currentPlayer = currentPlayer === player1 ? player2 : player1;
+                return true
             }
-    
-            const playerOneSymbol = symbol;
-    
-            UI.askQuestion("Best of how many games? Enter odd number", function askNumGames(numGames) {
-                numGames = numGames.trim();
-                const bestOf = parseInt(numGames);
-    
-                if (isNaN(bestOf) || bestOf <= 0 || bestOf % 2 === 0) {
-                    UI.invalidInput("Invalid number!");
-                    return UI.askQuestion("Best of how many games? Enter odd number", askNumGames);
-                }
-            
-                const game = new TicTacToe(playerOneSymbol, playWithComputer, bestOf);
+            return false;
+        };
 
-                UI.showMessage(`Flipping coin..`);
+        const checkWinner = () => {
+            const winningLines = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
 
-                setTimeout(() => {
-                
-                UI.showMessage(`${game.currentPlayer} starts first!`);
-                
-                setTimeout(() => {
-                    UI.clear();
-                    UI.header(game);
-                    UI.displayBoard(game.board);
-                    game.changePlayer();
-                    handleTurn(game);
-                }, 800);
-            }, 800);
-            });
-        });
-    });
-}
+            for (line of winningLines) {
+                const [a,b,c] = line;
+                if (board[a] && board[a] === board[b] && board[b] === board[c]) return board[a];
+            }
 
-function handleTurn(game) {
-    const winner = game.checkGameWinner();
+            return board.includes(null) ? null : 'DRAW';
+        };
 
-    if (winner) {
-        game.updateScore(winner);
-        UI.announceWinner(winner, game);
-        
-        const seriesWinner = game.checkSeriesWinner();
-        if (seriesWinner) {
-                UI.announceSeriesWinner(seriesWinner, game);
+        const getBoard = () => {
+            return board;
+        };
 
-                UI.askQuestion("Do you want to play again? y/n", (oneMoreTime) => {
-                const onceMore  = oneMoreTime.toLowerCase() === 'y';
-                if(onceMore) {
-                    startGame();
+        const getCurrentPlayer = () => {
+            return currentPlayer;
+        };
+
+        const reset = () => {
+            board = [null, null, null, null, null, null, null, null, null];
+        };
+
+        return { makeMove, checkWinner, getBoard, getCurrentPlayer, reset};
+    };
+
+    // GAME FLOW
+    const createGameFlow = (game, ui, ai, playWithComputer, bestOf, player1, player2) => {
+        let score = { [player1]: 0,
+                      [player2]: 0
+                    };
+        let round = 1;
+
+            const playGame = () => {
+                ui.clear();
+                updateUI();
+
+                if (round === 1) {
+                    ui.log(`Coin flip: ${game.getCurrentPlayer()} to begin`);
                 } else {
-                    UI.clear();
-                    UI.headerStart(game);
-                    UI.showMessage('Thank you for playing.')
+                    ui.log(`${game.getCurrentPlayer()} to start next game`);
+                }
+                
+                const handleMove = (index) => {
+
+                    if (!game.makeMove(index)) return ui.log("Space already taken. Try again"), requestMove();
+                    ui.clear();
+                    updateUI();
+                    const winner = game.checkWinner();
+                    if (winner) return endGame(winner);
+                    requestMove();
+                }
+
+                const requestMove = () => {
+                    if (playWithComputer && game.getCurrentPlayer() === player2) {
+                        ui.log("Computer is thinking..")
+                        ui.delayAction(() => handleMove(ai.computerMove(game)), 2000);
+                } else {
+                    const atttemptedMove = ui.getPlayerMove(game.getCurrentPlayer(), handleMove);
+                }
+                };
+                ui.delayAction(() => requestMove(), 2000);
+            };
+
+            const endGame = (winner) => {
+                
+                if (winner === "DRAW") {
+                    ui.clear();
+                    updateUI();
+                    ui.log("It's a draw");
+                    
+                } else {
+                    score[winner]++;
+                    ui.clear();
+                    updateUI();
+                    ui.log(`${winner} wins round ${round}`);                
+                }
+
+                if (score[player1] > bestOf / 2 || score[player2] > bestOf / 2) {
+                    const winner = score[player1] > score[player2] ? player1 : player2;
+                    const winnerScore = Math.max(score[player1], score[player2]);
+                    const loserScore = Math.min(score[player1], score[player2]);
+                    ui.log(`${winner} wins the series ${winnerScore} to ${loserScore}`);
+                
+                    // Ask if the player wants to play again
+                    ui.promptInput("Do you want to play again?", ["y", "n"], (playAgain) => {
+                        if (playAgain === "y") {
+                            TicTacToe.startGame(); // Restart game
+                        } else {
+                            ui.log("Thank you for playing"); // Show only if 'n' is selected
+                        }
+                    });
+                
+                    return;
+                }
+                
+
+                round++;
+                game.reset();
+                ui.delayAction(() => playGame(), 2000);
+            };
+
+            const updateUI = () => {
+                ui.scoreboard(player1, player2, score[player1], score[player2], bestOf);
+                ui.displayboard(game.getBoard());
+            };
+            
+            return { playGame };
+    };
+
+    // UI
+    const createUI = () => {
+
+        const main = document.getElementById('main');
+
+        const log = (message) => {
+            const messageDiv = document.createElement("div");
+            messageDiv.id = "message";
+            messageDiv.innerHTML = message;
+            main.appendChild(messageDiv);
+        }
+
+        const promptInput = (message, options, callback) => {
+
+            document.getElementById("input-container")?.remove();
+
+            const inputContainer = document.createElement("div");
+            inputContainer.id = "input-container";
+
+            const question = document.createElement("p");
+            question.innerHTML = `${message} (${options.join(" / ")})`;
+
+            const inputField = document.createElement("input");
+
+            inputContainer.appendChild(question);
+            inputContainer.appendChild(inputField);
+
+            document.getElementById("main").appendChild(inputContainer);
+
+            inputField.focus();
+
+            inputField.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    let input = inputField.value.trim().toLowerCase();
+        
+                    if (options.length === 0 || options.includes(input)) {
+                        inputContainer.remove();
+                        callback(input);
+                    } else {
+                        inputField.value = "";
+                        log("Invalid input. Try again.");
+                    }
                 }
             });
-            return;
+        };
+        
+        const getPlayerMove = (player, callback) => {
+
+            document.getElementById("input-container")?.remove();
+
+            const inputContainer = document.createElement("div");
+            inputContainer.id = "input-container";
+        
+            const question = document.createElement("p");
+            question.innerHTML = `Player ${player}, choose a number:`;
+        
+            const inputField = document.createElement("input");
+
+            inputContainer.appendChild(question);
+            inputContainer.appendChild(inputField);
+
+            document.getElementById("main").appendChild(inputContainer);
+
+            inputField.focus();
+
+            inputField.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    const move = parseInt(inputField.value, 10);
+                    inputContainer.remove();
+                    callback(move);
+                }
+            });
+        };
+        
+        const displayboard = (board) => {
+            log(`${addSpace(8)}${board[0] || 1} | ${board[1] || 2} | ${board[2] || 3}<br>${addSpace(7)}---•---•---<br>${addSpace(8)}${board[3] || 4} | ${board[4] || 5} | ${board[5] || 6}<br>${addSpace(7)}---•---•---<br>${addSpace(8)}${board[6] || 7} | ${board[7] || 8} | ${board[8] || 9}<br>`
+            );
         }
 
-        game.resetBoard();
-        game.currentPlayer = game.flipCoin();   
-
-        setTimeout(() => {
-            UI.clear();
-            UI.header(game);
-            UI.displayBoard(game.board);
-            UI.showMessage(`Next round to begin..`);
-            UI.showMessage(`Flipping coin.. ${game.currentPlayer} goes first.`);
-            handleTurn(game)}, 2000);
-        return;
-    }
-
-    game.changePlayer();
-    setTimeout(() => {
-        game.currentPlayer === game.playerOneSymbol ? playerOne(game) : playerTwo(game);
-    }, 500);
-}
-
-function playerOne(game) {
-    UI.askQuestion(`Player ${game.currentPlayer}, choose a number..`, (pos) => {
-        const position = parseInt(pos);
-        if (isNaN(position) || position < 1 || position > 9) {
-            UI.invalidInput("Invalid input! Choose a number between 1 and 9.");
-            return playerOne(game);
+        const scoreboard = (player1, player2, player1score, player2score, bestOf) => {
+            log(`${player1}:${player1score}<span></span>BEST OF ${bestOf}<span></span>${player2}:${player2score}`)
         }
-        if (!game.makeMove(position)) {
-            UI.invalidInput("Spot already taken! Try again.");
-            return playerOne(game);
+
+        const delayAction = (callback, delay = 1000) => {
+            setTimeout(callback, delay);
+        };
+        
+        const addSpace = (number) => {
+            return " ".repeat(number)
         }
-        UI.clear();
-        UI.header(game);
-        UI.displayBoard(game.board);
-        handleTurn(game);
-    });
-}
 
-function playerTwo(game) {
-    if (game.playWithComputer) {
-        UI.showMessage("Computer's turn..");
-        setTimeout(() => {
-            computerMove(game);
-            UI.clear();
-            UI.header(game);
-            UI.displayBoard(game.board);
-            handleTurn(game)
-        }, 1000); 
-    } else {
-        playerOne(game);
-    }
-}
+        const clear = () => {
+            main.innerHTML = '';
+        }
 
-// COMPUTER LOGIC
+        return { log, promptInput, displayboard, clear, scoreboard, getPlayerMove, delayAction };
 
-function computerMove(game) {
-    let move;
-    do {
-        move = Math.floor(Math.random() * 9) + 1;
-    } while (!game.makeMove(move));
-}
+        };
 
-// WEB UI
+    // COMPUTER
+    const createAI = () => {
+        const computerMove = (game) => {
+            return Math.floor(Math.random() * 9) + 1;
+        }
+        return { computerMove };
+    };
 
-class WEB_UI {
-    constructor(consoleElementId) {
-        this.consoleDiv = document.getElementById(consoleElementId);
-    }
+    // SET-UP
+
+    const startGame = () => {
+        const ui = createUI();
     
-    showMessage(message) {
-            const messageDiv = document.createElement("div");
-            messageDiv.innerHTML = message;
-            this.consoleDiv.appendChild(messageDiv);
-    }
-
-    displayBoard(board) {
-        this.showMessage(
-            `${board[0]} | ${board[1]} | ${board[2]}<br>` +
-            `---•---•---<br>` +
-            `${board[3]} | ${board[4]} | ${board[5]}<br>` +
-            `---•---•---<br>` +
-            `${board[6]} | ${board[7]} | ${board[8]}`
-        );
-    }
-
-    askQuestion(questionText, callback) {
-        document.querySelectorAll("input[type='text']").forEach(input => input.disabled = true);
-        
-        const questionDiv = document.createElement("div");
-        questionDiv.innerHTML = questionText;
-        this.consoleDiv.appendChild(questionDiv);
-        
-        const inputField = document.createElement("input");
-        inputField.type = "text";
-        inputField.id = "user-input";
-        this.consoleDiv.appendChild(inputField);
-        inputField.focus();
-
-        inputField.addEventListener("keypress", (event) => {
-            if (event.key === "Enter") {
-                callback(inputField.value.trim());
-            }
+        // Step 1: Ask if the player wants to play against the computer
+        ui.promptInput("Do you want to play with the computer?<br>", ["y", "n"], (playWithComputer) => {
+            const isComputer = playWithComputer === "y";
+    
+            // Step 2: Ask for the Best-of series
+            ui.promptInput("Best of how many games?<br>", ["1", "3", "5", "7", "9"], (bestOf) => {
+    
+                // Step 3: Ask Player 1 for X or O
+                ui.promptInput("Do you want to be X or O?<br>", ["x", "o"], (player1) => {
+                    player1 = player1.toUpperCase();
+                    const player2 = player1 === "X" ? "O" : "X";
+                    const ai = isComputer ? createAI() : null;
+                    const startingPlayer = Math.random() < 0.5 ? player1 : player2;
+                    const game = createGame(player1, player2, startingPlayer);
+                    const flow = createGameFlow(game, ui, ai, isComputer, bestOf, player1, player2);
+    
+                    // Start the game only after all questions are answered
+                    flow.playGame();
+                });
+            });
         });
-    }
-
-    announceWinner(winner, game) {
-        const message = winner === "DRAW" 
-            ? `---------------------------------------------------<br>Round ${game.round}: It's a tie!<br>---------------------------------------------------`
-            : `---------------------------------------------------<br>Round ${game.round}: Winner: ${winner}<br>---------------------------------------------------`;
-        this.showMessage(message);
-    }
-
-    announceSeriesWinner(seriesWinner, game) {
-        this.showMessage(
-            '***************************************************<br>' +
-            `          ${seriesWinner} WINS THE SERIES ${Math.max(game.score.X, game.score.O)} TO ${Math.min(game.score.X, game.score.O)}<br>` +
-            '***************************************************'
-        );
-    }
-
-    invalidInput(message) {
-        this.showMessage(message);
-    }    
+    };
     
-    header(game) {
-        this.showMessage(
-            '***************************************************<br>' +
-            'T  I  C  -  T  A  C  -  T  O  E<br>' +
-            '***************************************************<br>' +
-            `X PTS : ${game.score.X} <span></span> BEST OF ${game.totalGames} <span></span> O PTS : ${game.score.O}<br>`
-        );
-    }
 
-    headerStart() {
-        this.showMessage(
-            '***************************************************<br>' +
-            'T  I  C  -  T  A  C  -  T  O  E<br>' +
-            '***************************************************'
-        );
+    return { startGame };
 
-    }
-    clear() {
-        this.consoleDiv.innerHTML = "";
-    }
-}
+})();
 
-// DARK LIGHT MODE TOGGLE
-const themeToggle = document.getElementById('themeToggle');
-
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-theme');
-
-    if (document.body.classList.contains('dark-theme')) {
-        themeToggle.src = "icons/light.svg";
-    } else {
-        themeToggle.src = "icons/dark.svg";
-    }
-    
-    const inputFields = document.querySelectorAll("input[type='text']");
-    if (inputFields) {
-        inputFields[inputFields.length - 1].focus();
-    }
-});
-
-document.addEventListener("click", function (event) {
-    const inputFields = document.querySelectorAll("input[type='text']");
-    if (inputFields) {
-        inputFields[inputFields.length - 1].focus();
-    }
-})
-
-const UI = new WEB_UI('console');
-startGame();
+TicTacToe.startGame();

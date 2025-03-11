@@ -46,69 +46,14 @@
     isolation: isolate;
   }
 
-:root {
-  --bg-color: #F2F3EF;
-  --text-color: #183C4D;
-  --icon-color: invert(0);
-}
-
-.dark-theme {
-  --bg-color: #183C4D;
-  --text-color: #F2F3EF;;
-  --icon-color: invert(1);
-}
-
-body {
-  display: grid;
-  justify-content: center;
-  font-family: "Ubuntu Mono", monospace;
-  font-size: 24px;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.25s, color 0.25s, filter 0.25s;
-  height: 100%;
-}
-
-#console {
-    width: 700px;
-    overflow: auto;
+  #input-container, #message {
+    font-size: 24px;
+    width: 100%;
     text-align: center;
-}
+    padding: 10px 0;
+  }
 
-textarea:focus, input:focus{
-  outline: none;
-}
-
-input {
-  background-color: transparent;
-  border-style: none;
-  text-align: center;
-  color: var(--text-color);
-}
-
-div, input {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-span {
-  width: 120px;
-  display: inline-block;
-}
-
-.icons {
-  margin-top: 20px;
-  width: auto;
-  height: auto;
-  padding: 0 40px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.icons img {
-  filter: var(--icon-color);
-  height: 20px;
-  width: 20px;
-  justify-self: end;
-  cursor: pointer;
-}
+  span {
+    width: 50px;
+    display: inline-block;
+  }
