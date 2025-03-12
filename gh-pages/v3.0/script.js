@@ -6,8 +6,8 @@ const TicTacToe = (() => {
         let currentPlayer = startingPlayer;
         
         const makeMove = (index) => {
-            if (board[index - 1] === null) {
-                board[index - 1] = currentPlayer;
+            if (board[index] === null) {
+                board[index] = currentPlayer;
                 currentPlayer = currentPlayer === player1 ? player2 : player1;
                 return true
             }
@@ -76,7 +76,7 @@ const TicTacToe = (() => {
                         ui.log("Computer is thinking..")
                         ui.delayAction(() => handleMove(ai.computerMove(game)), 2000);
                 } else {
-                    const atttemptedMove = ui.getPlayerMove(game.getCurrentPlayer(), handleMove);
+                    ui.getPlayerMove(game, handleMove);
                 }
                 };
                 ui.delayAction(() => requestMove(), 2000);
@@ -123,7 +123,7 @@ const TicTacToe = (() => {
 
             const updateUI = () => {
                 ui.scoreboard(player1, player2, score[player1], score[player2], bestOf);
-                ui.displayboard(game.getBoard());
+                ui.displayboard(game, game.getBoard());
             };
             
             return { playGame };
@@ -175,38 +175,36 @@ const TicTacToe = (() => {
             });
         };
         
-        const getPlayerMove = (player, callback) => {
+        const getPlayerMove = (game, callback) => {
+            log(`Player ${game.getCurrentPlayer()} click a square`)
+            const buttons = document.querySelectorAll('.grid-button'); // Get buttons
+            buttons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    if (!button.textContent) { // Prevent duplicate moves
+                        const currentPlayer = game.getCurrentPlayer();
 
-            document.getElementById("input-container")?.remove();
-
-            const inputContainer = document.createElement("div");
-            inputContainer.id = "input-container";
-        
-            const question = document.createElement("p");
-            question.innerHTML = `Player ${player}, choose a number:`;
-        
-            const inputField = document.createElement("input");
-
-            inputContainer.appendChild(question);
-            inputContainer.appendChild(inputField);
-
-            document.getElementById("main").appendChild(inputContainer);
-
-            inputField.focus();
-
-            inputField.addEventListener("keypress", (event) => {
-                if (event.key === "Enter") {
-                    const move = parseInt(inputField.value, 10);
-                    inputContainer.remove();
-                    callback(move);
-                }
+                            callback(index); // Notify game logic
+                    }
+                });
             });
         };
         
-        const displayboard = (board) => {
-            log(`${addSpace(8)}${board[0] || 1} | ${board[1] || 2} | ${board[2] || 3}<br>${addSpace(7)}---•---•---<br>${addSpace(8)}${board[3] || 4} | ${board[4] || 5} | ${board[5] || 6}<br>${addSpace(7)}---•---•---<br>${addSpace(8)}${board[6] || 7} | ${board[7] || 8} | ${board[8] || 9}<br>`
-            );
-        }
+        
+        const displayboard = (game, board) => {
+            document.querySelector('.grid-container')?.remove(); // Clear previous board
+        
+            const gridContainer = document.createElement('div');
+            gridContainer.classList.add('grid-container');
+        
+            board.forEach((cell) => {
+                let button = document.createElement('button');
+                button.classList.add('grid-button');
+                button.textContent = cell ? String(cell) : '';
+                gridContainer.appendChild(button);
+            });
+        
+            document.getElementById("main").appendChild(gridContainer);
+        };
 
         const scoreboard = (player1, player2, player1score, player2score, bestOf) => {
             log(`${player1}:${player1score}<span></span>BEST OF ${bestOf}<span></span>${player2}:${player2score}`)
@@ -215,10 +213,6 @@ const TicTacToe = (() => {
         const delayAction = (callback, delay = 1000) => {
             setTimeout(callback, delay);
         };
-        
-        const addSpace = (number) => {
-            return " ".repeat(number)
-        }
 
         const clear = () => {
             main.innerHTML = '';
