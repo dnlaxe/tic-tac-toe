@@ -91,3 +91,16 @@ body {
   filter: var(--icon-color);
   cursor: pointer;
 }
+
+button {
+  cursor: pointer;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--text-color);
+}
+
+input {
+  color: var(--text-color)
+}

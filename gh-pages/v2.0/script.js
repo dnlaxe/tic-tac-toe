@@ -79,7 +79,7 @@ const TicTacToe = (() => {
                     const atttemptedMove = ui.getPlayerMove(game.getCurrentPlayer(), handleMove);
                 }
                 };
-                ui.delayAction(() => requestMove(), 2000);
+                ui.delayAction(() => requestMove(), 1000);
             };
 
             const endGame = (winner) => {
@@ -142,24 +142,29 @@ const TicTacToe = (() => {
         }
 
         const promptInput = (message, options, callback) => {
-
             document.getElementById("input-container")?.remove();
-
+        
             const inputContainer = document.createElement("div");
             inputContainer.id = "input-container";
-
+        
             const question = document.createElement("p");
             question.innerHTML = `${message} (${options.join(" / ")})`;
-
+        
             const inputField = document.createElement("input");
-
+        
+            // Error message element
+            const errorMessage = document.createElement("p");
+            errorMessage.id = "error-message";
+            errorMessage.style.display = "none"; // Initially hidden
+        
             inputContainer.appendChild(question);
             inputContainer.appendChild(inputField);
-
+            inputContainer.appendChild(errorMessage);
+        
             document.getElementById("main").appendChild(inputContainer);
-
+        
             inputField.focus();
-
+        
             inputField.addEventListener("keypress", (event) => {
                 if (event.key === "Enter") {
                     let input = inputField.value.trim().toLowerCase();
@@ -169,11 +174,15 @@ const TicTacToe = (() => {
                         callback(input);
                     } else {
                         inputField.value = "";
-                        log("Invalid input. Try again.");
+        
+                        // Show only one error message
+                        errorMessage.textContent = "Invalid input. Try again.";
+                        errorMessage.style.display = "block";
                     }
                 }
             });
         };
+        
         
         const getPlayerMove = (player, callback) => {
 

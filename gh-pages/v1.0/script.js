@@ -79,7 +79,7 @@ const TicTacToe = (() => {
                     const atttemptedMove = ui.getPlayerMove(game.getCurrentPlayer(), handleMove);
                 }
                 };
-                ui.delayAction(() => requestMove(), 2000);
+                ui.delayAction(() => requestMove(), 1000);
             };
 
             const endGame = (winner) => {

@@ -79,7 +79,7 @@ const TicTacToe = (() => {
                     ui.getPlayerMove(game, handleMove);
                 }
                 };
-                ui.delayAction(() => requestMove(), 2000);
+                ui.delayAction(() => requestMove(), 1000);
             };
 
             const endGame = (winner) => {
@@ -142,26 +142,36 @@ const TicTacToe = (() => {
         }
 
         const promptInput = (message, options, callback) => {
-
             document.getElementById("input-container")?.remove();
-
+        
             const inputContainer = document.createElement("div");
             inputContainer.id = "input-container";
-
+        
             const question = document.createElement("p");
-            question.innerHTML = `${message} (${options.join(" / ")})`;
-
-            const inputField = document.createElement("input");
-
+            question.innerHTML = `${message}`;
+        
+            const inputField = document.createElement("div");
+            for (i = 0; i < options.length; i++) {
+                const button = document.createElement('button');
+                button.classList.add('options');
+                button.textContent = options[i].toUpperCase();
+                inputField.appendChild(button)
+            }
+        
             inputContainer.appendChild(question);
             inputContainer.appendChild(inputField);
-
+        
             document.getElementById("main").appendChild(inputContainer);
 
-            inputField.focus();
-
-            inputField.addEventListener("keypress", (event) => {
-                if (event.key === "Enter") {
+            const buttons = inputField.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                callback(button.textContent);
+            });
+        });
+        
+            inputField.addEventListener("click", (event) => {
+                if (event.key === "click") {
                     let input = inputField.value.trim().toLowerCase();
         
                     if (options.length === 0 || options.includes(input)) {
@@ -169,7 +179,10 @@ const TicTacToe = (() => {
                         callback(input);
                     } else {
                         inputField.value = "";
-                        log("Invalid input. Try again.");
+        
+                        // Show only one error message
+                        errorMessage.textContent = "Invalid input. Try again.";
+                        errorMessage.style.display = "block";
                     }
                 }
             });
@@ -181,9 +194,7 @@ const TicTacToe = (() => {
             buttons.forEach((button, index) => {
                 button.addEventListener('click', () => {
                     if (!button.textContent) { // Prevent duplicate moves
-                        const currentPlayer = game.getCurrentPlayer();
-
-                            callback(index); // Notify game logic
+                        callback(index); // Notify game logic
                     }
                 });
             });

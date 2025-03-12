@@ -54,7 +54,7 @@
   }
 
   span {
-    width: 50px;
+    width: 100px;
     display: inline-block;
   }
 
@@ -83,4 +83,10 @@
 
 button {
   font-size: 32px;
+}
+
+.options {
+  height: 50px;
+  width: 50px;
+  margin: 10px;
 }
