@@ -69,20 +69,18 @@
 }
 
 .grid-button {
-  width: 144px;
-  height: 144px;
+  width: 120px;
+  height: 120px;
 }
 
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
-  gap: 20px;
+  gap: 10px;
+  padding: 10px 50px;
 }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  justify-items: center;
+button {
+  font-size: 32px;
 }
