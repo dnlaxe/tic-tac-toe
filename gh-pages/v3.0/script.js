@@ -105,6 +105,7 @@ const TicTacToe = (() => {
                     // Ask if the player wants to play again
                     ui.promptInput("Do you want to play again?", ["y", "n"], (playAgain) => {
                         if (playAgain === "Y") {
+                            ui.clear();
                             TicTacToe.startGame(); // Restart game
                         } else {
                             ui.clear();
