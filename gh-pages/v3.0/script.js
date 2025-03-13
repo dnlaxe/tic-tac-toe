@@ -166,7 +166,8 @@ const TicTacToe = (() => {
             const buttons = inputField.querySelectorAll('button');
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
-                callback(button.textContent);
+                button.classList.add('clicked');
+                delayAction(() => callback(button.textContent), 500);
             });
         });
         
@@ -194,6 +195,7 @@ const TicTacToe = (() => {
             buttons.forEach((button, index) => {
                 button.addEventListener('click', () => {
                     if (!button.textContent) { // Prevent duplicate moves
+                        console.log(`Added 'no-shadow' class to button ${index}`);
                         callback(index); // Notify game logic
                     }
                 });
@@ -211,6 +213,7 @@ const TicTacToe = (() => {
                 let button = document.createElement('button');
                 button.classList.add('grid-button');
                 button.textContent = cell ? String(cell) : '';
+                if(button.textContent = cell) button.classList.add('clicked');
                 gridContainer.appendChild(button);
             });
         
@@ -236,7 +239,7 @@ const TicTacToe = (() => {
     // COMPUTER
     const createAI = () => {
         const computerMove = (game) => {
-            return Math.floor(Math.random() * 9) + 1;
+            return Math.floor(Math.random() * 9);
         }
         return { computerMove };
     };
@@ -246,8 +249,8 @@ const TicTacToe = (() => {
     const startGame = () => {
         const ui = createUI();
 
-        ui.promptInput("Do you want to play with the computer?<br>", ["y", "n"], (playWithComputer) => {
-            const isComputer = playWithComputer === "y";
+        ui.promptInput("Do you want to play with the computer?<br>", ["Y", "N"], (playWithComputer) => {
+            const isComputer = playWithComputer === "Y";
     
             ui.promptInput("Best of how many games?<br>", ["1", "3", "5", "7", "9"], (bestOf) => {
     

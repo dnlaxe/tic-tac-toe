@@ -54,39 +54,43 @@
   }
 
   span {
-    width: 100px;
+    width: 80px;
     display: inline-block;
   }
 
-  input {
-    background-color: transparent;
-    border: none;
-    text-align: center;
-  }
-
-  textarea:focus, input:focus{
-    outline: none;
-}
-
 .grid-button {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
 }
 
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
-  gap: 10px;
-  padding: 10px 50px;
+  gap: 20px;
+  padding: 10px 100px;
+  justify-content: center;
 }
 
 button {
   font-size: 32px;
 }
 
+button:hover {
+  box-shadow: 2px 2px var(--text-color);
+}
+
 .options {
   height: 50px;
-  width: 50px;
+  width: 60px;
   margin: 10px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.clicked {
+  box-shadow: none !important;
+  background-color: var(--text-color);
+  color: var(--bg-color);
+  pointer-events: none;
 }
