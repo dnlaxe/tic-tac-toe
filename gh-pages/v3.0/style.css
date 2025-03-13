@@ -82,7 +82,7 @@ button:hover {
 
 .options {
   height: 50px;
-  width: 60px;
+  width: 50px;
   margin: 10px;
   font-size: 24px;
   text-align: center;
@@ -93,4 +93,8 @@ button:hover {
   background-color: var(--text-color);
   color: var(--bg-color);
   pointer-events: none;
+}
+
+p {
+  margin-bottom: 10px;
 }
