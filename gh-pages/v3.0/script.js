@@ -192,12 +192,12 @@ const TicTacToe = (() => {
         
         const getPlayerMove = (game, callback) => {
             log(`Player ${game.getCurrentPlayer()} click a square`)
-            const buttons = document.querySelectorAll('.grid-button'); // Get buttons
+            const buttons = document.querySelectorAll('.grid-button');
             buttons.forEach((button, index) => {
                 button.addEventListener('click', () => {
-                    if (!button.textContent) { // Prevent duplicate moves
+                    if (!button.textContent) {
                         console.log(`Added 'no-shadow' class to button ${index}`);
-                        callback(index); // Notify game logic
+                        callback(index);
                     }
                 });
             });
@@ -205,16 +205,50 @@ const TicTacToe = (() => {
         
         
         const displayboard = (game, board) => {
-            document.querySelector('.grid-container')?.remove(); // Clear previous board
+            document.querySelector('.grid-container')?.remove();
         
             const gridContainer = document.createElement('div');
             gridContainer.classList.add('grid-container');
+
+            const winner = game.checkWinner();
+            let winningCombination = [];
+
+            if (winner && winner !== "DRAW") {
+                const winningLines = [
+                    [0,1,2], [3,4,5], [6,7,8],
+                    [0,3,6], [1,4,7], [2,5,8],
+                    [0,4,8], [2,4,6]
+                ];
+
+                for (const line of winningLines) {
+                    const [a, b, c] = line;
+                    if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+                        winningCombination = line;
+                        break;
+                    }
+                }
+            }
         
-            board.forEach((cell) => {
+            board.forEach((cell, index) => {
                 let button = document.createElement('button');
                 button.classList.add('grid-button');
                 button.textContent = cell ? String(cell) : '';
                 if(button.textContent = cell) button.classList.add('clicked');
+
+                if (winningCombination.includes(index)) {
+                    button.remove('clicked');
+                    button.classList.add('winner');
+                }
+
+                if (winner === "DRAW") {
+                    button.classList.add('draw');
+                }
+
+                else if (winner && !winningCombination.includes(index)) {
+                    button.classList.remove('clicked');
+                    button.classList.add('staypushed')
+                }
+
                 gridContainer.appendChild(button);
             });
         
