@@ -164,8 +164,6 @@ const TicTacToe = (() => {
         
             document.getElementById("main").appendChild(inputContainer);
 
-            delayAction(() => document.activeElement?.blur(), 10);
-
             const buttons = inputField.querySelectorAll('button');
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -255,8 +253,6 @@ const TicTacToe = (() => {
             });
         
             document.getElementById("main").appendChild(gridContainer);
-            delayAction(() => document.activeElement?.blur(), 10);
-
         };
 
         const scoreboard = (player1, player2, player1score, player2score, bestOf) => {
