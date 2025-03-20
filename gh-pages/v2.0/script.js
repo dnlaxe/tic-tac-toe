@@ -275,3 +275,4 @@ const TicTacToe = (() => {
 })();
 
 TicTacToe.startGame();
+inputField.focus();
