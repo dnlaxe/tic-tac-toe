@@ -253,6 +253,7 @@ const TicTacToe = (() => {
             });
         
             document.getElementById("main").appendChild(gridContainer);
+            document.body.focus();
         };
 
         const scoreboard = (player1, player2, player1score, player2score, bestOf) => {
@@ -307,9 +308,5 @@ const TicTacToe = (() => {
     return { startGame };
 
 })();
-
-window.onload = () => {
-    document.body.focus();
-  };
 
 TicTacToe.startGame();
