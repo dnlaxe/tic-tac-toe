@@ -164,6 +164,8 @@ const TicTacToe = (() => {
         
             document.getElementById("main").appendChild(inputContainer);
 
+            document.body.focus();
+
             const buttons = inputField.querySelectorAll('button');
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
