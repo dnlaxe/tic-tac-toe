@@ -308,5 +308,8 @@ const TicTacToe = (() => {
 
 })();
 
+window.onload = () => {
+    document.body.focus();
+  };
+
 TicTacToe.startGame();
-document.focus();

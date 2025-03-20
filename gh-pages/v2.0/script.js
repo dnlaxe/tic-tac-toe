@@ -274,5 +274,8 @@ const TicTacToe = (() => {
 
 })();
 
+window.onload = () => {
+    inputField.focus();
+  };
+
 TicTacToe.startGame();
-inputField.focus();
